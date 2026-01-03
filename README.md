@@ -1,5 +1,5 @@
 # Antigravity Tools 🚀
-> 专业的 AI 账号管理与协议反代系统 (v3.3.13)
+> 专业的 AI 账号管理与协议反代系统 (v3.3.14)
 <div align="center">
   <img src="public/icon.png" alt="Antigravity Logo" width="120" height="120" style="border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
 
@@ -8,7 +8,7 @@
   
   <p>
     <a href="https://github.com/lbjlaq/Antigravity-Manager">
-      <img src="https://img.shields.io/badge/Version-3.3.13-blue?style=flat-square" alt="Version">
+      <img src="https://img.shields.io/badge/Version-3.3.14-blue?style=flat-square" alt="Version">
     </a>
     <img src="https://img.shields.io/badge/Tauri-v2-orange?style=flat-square" alt="Tauri">
     <img src="https://img.shields.io/badge/Backend-Rust-red?style=flat-square" alt="Rust">
@@ -182,6 +182,30 @@ print(response.choices[0].message.content)
 ## 📝 开发者与社区
 
 *   **版本演进 (Changelog)**:
+    *   **v3.3.14 (2026-01-03)**:
+        - **Claude 协议鲁棒性改进** (核心致谢 @karasungur PR #289):
+            - **Thinking Block 签名验证增强**:
+                - 支持带有效签名的空 thinking blocks (尾部签名场景)
+                - 无效签名的 blocks 优雅降级为文本而非丢弃,保留内容避免数据丢失
+                - 增强调试日志,便于排查签名问题
+            - **工具/函数调用兼容性优化**:
+                - 提取 web 搜索回退模型为命名常量 `WEB_SEARCH_FALLBACK_MODEL`,提升可维护性
+                - 当存在 MCP 工具时自动跳过 googleSearch 注入,避免冲突
+                - 添加信息性日志,便于调试工具调用场景
+                - **重要说明**: Gemini Internal API 不支持混合使用 `functionDeclarations` 和 `googleSearch`
+            - **SSE 解析错误恢复机制**:
+                - 新增 `parse_error_count` 和 `last_valid_state` 追踪,实现流式响应错误监控
+                - 实现 `handle_parse_error()` 用于优雅的流降级
+                - 实现 `reset_error_state()` 用于错误后恢复
+                - 实现 `get_error_count()` 用于获取错误计数
+                - 高错误率警告系统 (>5 个错误),便于运维监控
+                - 详细的调试日志,支持故障排查损坏流
+            - **影响范围**: 这些改进显著提升了 Claude CLI、Cursor、Cherry Studio 等客户端的稳定性,特别是在多轮对话、工具调用和流式响应场景下。
+        - **仪表板统计修复** (核心致谢 @yinjianhong22-design PR #285):
+            - **修复低配额统计误报**: 修复了被禁用账户 (403 状态) 被错误计入"低配额"统计的问题
+            - **逻辑优化**: 在 `lowQuotaCount` 过滤器中添加 `is_forbidden` 检查,排除被禁用账户
+            - **数据准确性提升**: 仪表板现在能准确反映真实的低配额活跃账户数量,避免误报
+            - **影响范围**: 提升了仪表板数据的准确性和用户体验,用户可以更清晰地了解需要关注的账户。
     *   **v3.3.13 (2026-01-03)**:
         - **Thinking 模式稳定性修复**:
             - **修复空 Thinking 内容错误**: 当客户端发送空的 Thinking 块时，自动降级为普通文本块，避免 `thinking: Field required` 错误。

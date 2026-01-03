@@ -1,5 +1,5 @@
 # Antigravity Tools 🚀
-> Professional AI Account Management & Proxy System (v3.3.13)
+> Professional AI Account Management & Proxy System (v3.3.14)
 
 <div align="center">
   <img src="public/icon.png" alt="Antigravity Logo" width="120" height="120" style="border-radius: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.15);">
@@ -9,7 +9,7 @@
   
   <p>
     <a href="https://github.com/lbjlaq/Antigravity-Manager">
-      <img src="https://img.shields.io/badge/Version-3.3.13-blue?style=flat-square" alt="Version">
+      <img src="https://img.shields.io/badge/Version-3.3.14-blue?style=flat-square" alt="Version">
     </a>
     <img src="https://img.shields.io/badge/Tauri-v2-orange?style=flat-square" alt="Tauri">
     <img src="https://img.shields.io/badge/Backend-Rust-red?style=flat-square" alt="Rust">
@@ -166,6 +166,30 @@ print(response.choices[0].message.content)
 
 ## 📝 Developer & Community
 
+    *   **v3.3.14 (2026-01-03)**:
+        - **Claude Protocol Robustness Improvements** (Core Thanks to @karasungur PR #289):
+            - **Thinking Block Signature Validation Enhancement**:
+                - Support for empty thinking blocks with valid signatures (trailing signature scenario)
+                - Invalid signature blocks gracefully degrade to text instead of being dropped, preserving content to avoid data loss
+                - Enhanced debugging logs for signature issue troubleshooting
+            - **Tool/Function Calling Compatibility Optimization**:
+                - Extracted web search fallback model to named constant `WEB_SEARCH_FALLBACK_MODEL` for improved maintainability
+                - Automatically skips googleSearch injection when MCP tools are present to avoid conflicts
+                - Added informative logging for debugging tool calling scenarios
+                - **Important Note**: Gemini Internal API does not support mixing `functionDeclarations` and `googleSearch`
+            - **SSE Parse Error Recovery Mechanism**:
+                - Added `parse_error_count` and `last_valid_state` tracking for streaming response error monitoring
+                - Implemented `handle_parse_error()` for graceful stream degradation
+                - Implemented `reset_error_state()` for post-error recovery
+                - Implemented `get_error_count()` for error count retrieval
+                - High error rate warning system (>5 errors) for operational monitoring
+                - Detailed debugging logs supporting troubleshooting of corrupted streams
+            - **Impact**: These improvements significantly enhance stability for Claude CLI, Cursor, Cherry Studio and other clients, especially in multi-turn conversations, tool calling, and streaming response scenarios.
+        - **Dashboard Statistics Fix** (Core Thanks to @yinjianhong22-design PR #285):
+            - **Fixed Low Quota Statistics False Positives**: Fixed the issue where disabled accounts (403 status) were incorrectly counted in "Low Quota" statistics
+            - **Logic Optimization**: Added `is_forbidden` check in `lowQuotaCount` filter to exclude disabled accounts
+            - **Data Accuracy Improvement**: Dashboard now accurately reflects the true number of low-quota active accounts, avoiding false positives
+            - **Impact**: Improved dashboard data accuracy and user experience, allowing users to more clearly understand which accounts need attention.
     *   **v3.3.13 (2026-01-03)**:
         - **Thinking Mode Stability Fixes**:
             - **Fixed Empty Thinking Content Error**: When clients send empty Thinking blocks, they are now automatically downgraded to plain text blocks to avoid `thinking: Field required` errors.
